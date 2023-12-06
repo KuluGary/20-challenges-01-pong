@@ -1,0 +1,109 @@
+[gd_scene load_steps=10 format=3 uid="uid://cejhfn5evixbl"]
+
+[ext_resource type="PackedScene" uid="uid://bss6q4kd6y3jp" path="res://ball.tscn" id="1_7i1un"]
+[ext_resource type="Script" path="res://world.gd" id="1_li1p1"]
+[ext_resource type="Texture2D" uid="uid://biw2gxsx82le6" path="res://sprites/paddle.png" id="1_yo23a"]
+[ext_resource type="Script" path="res://score_goal.gd" id="3_ar1fn"]
+[ext_resource type="FontFile" uid="uid://cv1tm2qtm8aag" path="res://fonts/ThaleahFat.ttf" id="3_gcng3"]
+[ext_resource type="PackedScene" uid="uid://ctu8wnwjfq2c0" path="res://wall.tscn" id="3_jr3s5"]
+[ext_resource type="PackedScene" uid="uid://cnha8ovalb5eg" path="res://character_paddle.tscn" id="4_mguuu"]
+[ext_resource type="PackedScene" uid="uid://b60hrqxlsb3rl" path="res://paddle.tscn" id="5_rx1ad"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_b2oqg"]
+size = Vector2(8, 120)
+
+[node name="World" type="Node2D"]
+script = ExtResource("1_li1p1")
+
+[node name="Camera2D" type="Camera2D" parent="."]
+position = Vector2(80, 60)
+
+[node name="Label" type="Label" parent="."]
+offset_left = 6.0
+offset_top = 96.0
+offset_right = 202.0
+offset_bottom = 121.0
+theme_override_colors/font_color = Color(1, 1, 1, 0.443137)
+theme_override_fonts/font = ExtResource("3_gcng3")
+theme_override_font_sizes/font_size = 10
+text = "PRESS SPACE TO
+ RESTART"
+
+[node name="Divider" type="Sprite2D" parent="."]
+position = Vector2(80, 60)
+scale = Vector2(0.5, 3.75)
+texture = ExtResource("1_yo23a")
+
+[node name="Ball" parent="." instance=ExtResource("1_7i1un")]
+position = Vector2(80, 60)
+
+[node name="Scores" type="Node" parent="."]
+
+[node name="PlayerScore" type="Label" parent="Scores"]
+offset_left = 8.0
+offset_top = 8.0
+offset_right = 48.0
+offset_bottom = 31.0
+theme_override_fonts/font = ExtResource("3_gcng3")
+text = "0"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="OpponentScore" type="Label" parent="Scores"]
+offset_left = 112.0
+offset_top = 8.0
+offset_right = 152.0
+offset_bottom = 31.0
+theme_override_fonts/font = ExtResource("3_gcng3")
+text = "0"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Walls" type="Node" parent="."]
+
+[node name="Wall" parent="Walls" instance=ExtResource("3_jr3s5")]
+position = Vector2(80, -8)
+rotation = -1.5708
+scale = Vector2(1, 5.14635)
+
+[node name="Wall2" parent="Walls" instance=ExtResource("3_jr3s5")]
+position = Vector2(80, 120)
+rotation = -1.5708
+scale = Vector2(1, 5.14635)
+collision_mask = 0
+
+[node name="Goals" type="Node" parent="."]
+
+[node name="PlayerScoreGoal" type="Area2D" parent="Goals" node_paths=PackedStringArray("point_counter")]
+collision_layer = 8
+collision_mask = 2
+script = ExtResource("3_ar1fn")
+point_counter = NodePath("../../Scores/OpponentScore")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Goals/PlayerScoreGoal"]
+position = Vector2(-4, 60)
+shape = SubResource("RectangleShape2D_b2oqg")
+
+[node name="OpponentScoreGoal" type="Area2D" parent="Goals" node_paths=PackedStringArray("point_counter")]
+position = Vector2(168, 0)
+collision_layer = 8
+collision_mask = 2
+script = ExtResource("3_ar1fn")
+point_counter = NodePath("../../Scores/PlayerScore")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Goals/OpponentScoreGoal"]
+position = Vector2(-4, 60)
+shape = SubResource("RectangleShape2D_b2oqg")
+
+[node name="Paddles" type="Node" parent="."]
+
+[node name="CharacterPaddle" parent="Paddles" instance=ExtResource("4_mguuu")]
+position = Vector2(32, 56)
+collision_mask = 1
+
+[node name="Paddle" parent="Paddles" node_paths=PackedStringArray("ball") instance=ExtResource("5_rx1ad")]
+position = Vector2(136, 56)
+ball = NodePath("../../Ball")
+
+[connection signal="area_entered" from="Goals/PlayerScoreGoal" to="Goals/PlayerScoreGoal" method="_on_area_entered"]
+[connection signal="area_entered" from="Goals/OpponentScoreGoal" to="Goals/OpponentScoreGoal" method="_on_area_entered"]

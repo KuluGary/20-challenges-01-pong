@@ -1,0 +1,31 @@
+[gd_scene load_steps=6 format=3 uid="uid://bss6q4kd6y3jp"]
+
+[ext_resource type="Script" path="res://ball.gd" id="1_f22tp"]
+[ext_resource type="Texture2D" uid="uid://cub6b6tortl1l" path="res://sprites/ball.png" id="1_kytw7"]
+[ext_resource type="AudioStream" uid="uid://btor5h48f17gp" path="res://sfx/Bump.wav" id="3_ew87q"]
+[ext_resource type="AudioStream" uid="uid://ccfhpbfervqgg" path="res://sfx/Goal.wav" id="4_hedp1"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_rkdo6"]
+radius = 6.0
+
+[node name="Ball" type="Area2D"]
+collision_layer = 2
+collision_mask = 13
+script = ExtResource("1_f22tp")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture = ExtResource("1_kytw7")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_rkdo6")
+
+[node name="SFX" type="Node" parent="."]
+
+[node name="BumpSound" type="AudioStreamPlayer2D" parent="SFX"]
+stream = ExtResource("3_ew87q")
+
+[node name="ScoreSound" type="AudioStreamPlayer2D" parent="SFX"]
+stream = ExtResource("4_hedp1")
+
+[connection signal="area_entered" from="." to="." method="_on_area_entered"]
+[connection signal="body_entered" from="." to="." method="_on_body_entered"]
